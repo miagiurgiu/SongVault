@@ -1,17 +1,41 @@
 package org.example;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-public class Main {
-    static void main() {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        IO.println(String.format("Hello and welcome!"));
+import controller.SongController;
+import infrastructure.AuditLogger;
+import infrastructure.IdGenerator;
+import model.repository.FileRepository;
+import model.repository.SongRepository;
+import model.service.ArchiveService;
+import model.service.ReportService;
+import model.service.SearchService;
+import view.ConsoleView;
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            IO.println("i = " + i);
-        }
+import java.nio.file.Path;
+
+public class Main {
+
+    public static void main(String[] args) {
+        Path songsFile = Path.of("data", "songs.tsv");
+        Path auditFile = Path.of("data", "audit.log");
+
+        SongRepository songRepository = new FileRepository(songsFile);
+        ArchiveService archiveService = new ArchiveService(songRepository);
+        SearchService searchService = new SearchService(songRepository);
+        ReportService reportService = new ReportService(songRepository);
+
+        ConsoleView view = new ConsoleView();
+        IdGenerator idGenerator = new IdGenerator();
+        AuditLogger auditLogger = new AuditLogger(auditFile);
+
+        SongController controller = new SongController(
+                view,
+                archiveService,
+                searchService,
+                reportService,
+                idGenerator,
+                auditLogger
+        );
+
+        controller.run();
     }
 }

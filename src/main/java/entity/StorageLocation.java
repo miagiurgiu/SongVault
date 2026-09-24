@@ -2,7 +2,7 @@ package entity;
 
 public record StorageLocation(String zone, int shelf, int slot) {
     public StorageLocation {
-        if(zone==null && zone.isBlank()){
+        if(zone==null || zone.isBlank()){ // we want to reject the zone if either it is null or blank
             throw new IllegalArgumentException("Zone cannot be empty");
         }
         if(slot<1 || slot >999){

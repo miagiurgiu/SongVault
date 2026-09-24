@@ -18,7 +18,10 @@ public class Song {
     private SongStatus songStatus;
     private StorageLocation storageLocation;
 
-    public Song(String artist, String id, String title, String album, String genre, int releaseYear, int durationInSeconds, String creator, AiTrainingPolicy aiTrainingPolicy, String fingerprint, String notes) {
+    public Song(String artist, String id, String title, String album, String genre,
+                int releaseYear, int durationInSeconds, String creator,
+                AiTrainingPolicy aiTrainingPolicy, String fingerprint, String notes) {
+
         this.artist = artist;
         this.id = id;
         this.title = title;
@@ -30,46 +33,54 @@ public class Song {
         this.aiTrainingPolicy = aiTrainingPolicy;
         this.fingerprint = fingerprint;
         this.notes = notes;
+
+        // A newly registered song currently has null status. Shouldn't it be that every new song must start as REGISTERED?
+        this.songStatus = SongStatus.REGISTERED;
     }
 
-    public void checkIn(StorageLocation storageLocation){
-        requiredStatus(SongStatus.REGISTERED,SongStatus.CHECKED_OUT);
-        this.storageLocation= Objects.requireNonNull(storageLocation);
-        this.songStatus=SongStatus.IN_STORAGE;
+    public void checkIn(StorageLocation storageLocation) {
+        requiredStatus(SongStatus.REGISTERED, SongStatus.CHECKED_OUT);
+        this.storageLocation = Objects.requireNonNull(storageLocation);
+        this.songStatus = SongStatus.IN_STORAGE;
     }
 
-    public void checkOut(){
+    public void checkOut() {
         requiredStatus(SongStatus.IN_STORAGE);
-        this.storageLocation=null;
-        this.songStatus=SongStatus.CHECKED_OUT;
+        this.storageLocation = null;
+        this.songStatus = SongStatus.CHECKED_OUT;
     }
 
-    public void moveSong(StorageLocation storageLocation){
+    public void moveSong(StorageLocation storageLocation) {
         requiredStatus(SongStatus.IN_STORAGE);
-        this.storageLocation= Objects.requireNonNull(storageLocation);
+        this.storageLocation = Objects.requireNonNull(storageLocation);
     }
 
-    public void archiveSong(){
-        if(songStatus==SongStatus.ARCHIVED){
+    public void archiveSong() {
+        if (songStatus == SongStatus.ARCHIVED) {
             throw new IllegalArgumentException("Song already archived");
         }
-        this.storageLocation=null;
-        this.songStatus=SongStatus.ARCHIVED;
+
+        this.storageLocation = null;
+        this.songStatus = SongStatus.ARCHIVED;
     }
 
-    private void requiredStatus(SongStatus... allowedStatuses){
-        for(SongStatus allowed: allowedStatuses){
-            if(allowed==songStatus){
+    private void requiredStatus(SongStatus... allowedStatuses) {
+        for (SongStatus allowed : allowedStatuses) {
+            if (allowed == songStatus) {
                 return;
             }
         }
-        throw new IllegalArgumentException("Invalid operation with this status "+songStatus);
+
+        throw new IllegalArgumentException(
+                "Invalid operation with this status " + songStatus
+        );
     }
 
-    private static String requiredText(String value, String field){
-        if(value==null || value.isBlank()){
-            throw new IllegalArgumentException("Value cannot be empty"+value);
+    private static String requiredText(String value, String field) {
+        if (value == null || value.isBlank()) {
+            throw new IllegalArgumentException("Value cannot be empty" + value);
         }
+
         return value.trim();
     }
 
@@ -157,20 +168,26 @@ public class Song {
         this.notes = notes;
     }
 
+    // the service layer will need to know the current status.
+    public SongStatus getSongStatus() {
+        return songStatus;
+    }
+
+    // the service/repository/view will need the current physical location.
+    public StorageLocation getStorageLocation() {
+        return storageLocation;
+    }
+
     public void restoreState(
             SongStatus status,
             StorageLocation location
     ) {
-
-        this.songStatus =
-                Objects.requireNonNull(status);
-
+        this.songStatus = Objects.requireNonNull(status);
         this.storageLocation = location;
     }
 
     @Override
     public String toString() {
-
         return "%s | %s — %s | %s | %d | %s | %s"
                 .formatted(
                         id,
