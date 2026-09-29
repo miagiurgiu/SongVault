@@ -18,17 +18,13 @@ public class ArchiveService {
 
     public Song registerSong(Song song) {
         if (songRepository.existsByFingerprint(song.getFingerprint())) {
-            throw new StorageConflictException(
-                    "A song with this fingerprint already exists."
-            );
+            throw new StorageConflictException("A song with this fingerprint already exists.");
         }
-
         return songRepository.save(song);
     }
 
     public void checkIn(String id, StorageLocation location) {
         Song song = getSong(id);
-
         if (songRepository.findLocationIsUsed(location.key(), id)) {
             throw new StorageConflictException(
                     "The storage location is already occupied."

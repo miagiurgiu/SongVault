@@ -1,0 +1,10 @@
+AUDIT LOGGING:
+- mantaining an immutable record of administrative actions
+- every time a song is registered, an entry is recorded to data/audit.log
+
+"SERVICE LAYER SHOULD DEPEND ON THE INTERFACE, not directly on the file implementation system"
+- the interface (SongRepository) != GUI
+- the implementation (FileSongRepository)
+- service layer
+
+.tsv ce e extensia asta

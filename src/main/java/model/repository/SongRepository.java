@@ -9,6 +9,9 @@ public interface SongRepository {
     Song save(Song song);
     Optional<Song> findById(String id);
     List<Song> findAll();
-    boolean existsByFingerprint(String fingerprint);
     boolean findLocationIsUsed(String locationKey, String songId);
-}
+    // check if a fingerprint exists
+    boolean existsByFingerprint(String fingerprint);
+    // check if a location is occupied
+    //boolean findLocationIsUsed(String locationKey, String excludeSongId)
+;}

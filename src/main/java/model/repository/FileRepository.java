@@ -31,7 +31,6 @@ public class FileRepository implements SongRepository {
             throw new PersistanceException("Failed to initialize file storage.", e);
         }
     }
-
     @Override
     public Song save(Song song) {
         songMap.put(song.getId(), song);
